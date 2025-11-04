@@ -1,0 +1,32 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: dep-2024mt03517
+spec:
+  replicas: 2
+  selector:
+    matchLabels:
+      app: my-flask-app
+  template:
+    metadata:
+      labels:
+        app: my-flask-app
+      annotations:
+        prometheus.io/scrape: "true"
+        prometheus.io/path: "/metrics"
+        prometheus.io/port: "8000"
+    spec:
+      containers:
+        - name: flask-app-container
+          image: 390685732640.dkr.ecr.ap-south-1.amazonaws.com/img-2024mt03517:latest
+          imagePullPolicy: Always
+          ports:
+            - containerPort: 8000
+          envFrom:
+            - configMapRef:
+                name: config-2024mt03517
+          env:
+            - name: HOSTNAME
+              valueFrom:
+                fieldRef:
+                  fieldPath: metadata.name
